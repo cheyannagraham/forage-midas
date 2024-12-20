@@ -19,19 +19,9 @@ public class TransactionService {
     }
 
     public boolean processNewTransaction(Transaction transaction) {
-        // Validate recepient and sender exist
-        if (this.validateTransactionUsers(transaction.getSenderId(), transaction.getRecipientId())) {
-
-//             validate sufficient funds
-            if (this.validateTransactionAmount(transaction.getSenderId(), transaction.getAmount())) {
-
-                //Comlpete Transaction
-                return this.completeTransaction(transaction);
-            }else System.out.println("Insufficient balance: " + transaction.getAmount());
-        }
-        else System.out.println("Invalid sender or recipient");
-        return false;
-
+        if (!this.validateTransactionUsers(transaction.getSenderId(), transaction.getRecipientId())) return false;
+        if (!this.validateTransactionAmount(transaction.getSenderId(), transaction.getAmount())) return false;
+        return this.completeTransaction(transaction);
     }
 
     public boolean validateTransactionUsers(Long senderId, Long recepientId) {
@@ -45,14 +35,17 @@ public class TransactionService {
     public boolean completeTransaction(Transaction transaction) {
         UserRecord sender = this.userService.getUser(transaction.getSenderId()).get();
         UserRecord recipient = this.userService.getUser(transaction.getRecipientId()).get();
-//        this.userService.printUserBalance(sender.getId());
-//        this.userService.printUserBalance(recipient.getId());
 
         TransactionRecord transactionRecord = new TransactionRecord(sender, recipient, transaction.getAmount());
+
         try {
             transactionRecordRepository.save(transactionRecord);
             this.userService.updateUsersBalance(sender, recipient, transaction.getAmount());
+
+            System.out.println("---------------------------TASK 3 PrintOut-------------------------");
+            System.out.println("SENDER:");
             this.userService.printUserBalance(sender.getId());
+            System.out.println("RECIPIENT:");
             this.userService.printUserBalance(recipient.getId());
             return true;
         } catch (Exception e) {

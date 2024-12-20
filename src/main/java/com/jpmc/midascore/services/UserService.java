@@ -24,21 +24,18 @@ public class UserService {
         return this.userRepo.findById(userId);
     }
 
-    //FIX Optional: Assuming user exists at this point
     public boolean isSufficientBalance(Long userId, float amount) {
         return !(this.getUser(userId).get().getBalance() - amount < 0);
     }
 
-    public boolean updateUsersBalance(UserRecord sender, UserRecord receipient, float amount) {
+    public void updateUsersBalance(UserRecord sender, UserRecord receipient, float amount) {
         try {
             receipient.setBalance(receipient.getBalance() + amount);
             sender.setBalance(sender.getBalance() - amount);
             userRepo.save(sender);
             userRepo.save(receipient);
-            return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return false;
         }
     }
 
