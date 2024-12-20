@@ -42,8 +42,8 @@ public class UserService {
         }
     }
 
-//    public void printUserBalance(Long userId) {
-//        UserRecord user = this.getUser(userId).get();
-//        System.out.println(user);
-//    }
+    public void printUserBalance(Long userId) {
+        UserRecord user = this.getUser(userId).get();
+        System.out.println(user);
+    }
 }

@@ -52,8 +52,8 @@ public class TransactionService {
         try {
             transactionRecordRepository.save(transactionRecord);
             this.userService.updateUsersBalance(sender, recipient, transaction.getAmount());
-//            this.userService.printUserBalance(sender.getId());
-//            this.userService.printUserBalance(recipient.getId());
+            this.userService.printUserBalance(sender.getId());
+            this.userService.printUserBalance(recipient.getId());
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());

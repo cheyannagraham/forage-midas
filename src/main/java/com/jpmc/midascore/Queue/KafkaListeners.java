@@ -21,7 +21,7 @@ public class KafkaListeners {
         TransactionService transactionService = context.getBean(TransactionService.class);
         var result = transactionService.processNewTransaction(transaction);
 
-        System.out.println(transaction);
-        System.out.println("New Transaction added: " + result);
+//        System.out.println(transaction);
+//        System.out.println("New Transaction added: " + result);
     }
 }
