@@ -2,10 +2,12 @@ package com.jpmc.midascore.services;
 
 import com.jpmc.midascore.entity.TransactionRecord;
 import com.jpmc.midascore.entity.UserRecord;
+import com.jpmc.midascore.foundation.Incentive;
 import com.jpmc.midascore.foundation.Transaction;
 import com.jpmc.midascore.repository.TransactionRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 @Service
 public class TransactionService {
@@ -24,23 +26,31 @@ public class TransactionService {
         return this.completeTransaction(transaction);
     }
 
+    // validate users exists
     public boolean validateTransactionUsers(Long senderId, Long recepientId) {
         return this.userService.userIsValid(senderId) && this.userService.userIsValid(recepientId);
     }
 
+    //validate sufficient balance
     public boolean validateTransactionAmount(Long senderId, float transactionAmount) {
         return this.userService.isSufficientBalance(senderId, transactionAmount);
     }
 
     public boolean completeTransaction(Transaction transaction) {
+        Incentive incentive = getIncentiveAmount(transaction);
+        transaction.setIncentiveAmount(incentive.getAmount());
+
+        System.out.println("INCENTIVE AMOUNT RETURNED:\n" + incentive.getAmount());
+
         UserRecord sender = this.userService.getUser(transaction.getSenderId()).get();
         UserRecord recipient = this.userService.getUser(transaction.getRecipientId()).get();
 
-        TransactionRecord transactionRecord = new TransactionRecord(sender, recipient, transaction.getAmount());
+        TransactionRecord transactionRecord = new TransactionRecord(sender, recipient, transaction);
+
 
         try {
             transactionRecordRepository.save(transactionRecord);
-            this.userService.updateUsersBalance(sender, recipient, transaction.getAmount());
+            this.userService.updateUsersBalance(sender, recipient, transaction);
 
             System.out.println("---------------------------TASK 3 PrintOut-------------------------");
             System.out.println("SENDER:");
@@ -53,4 +63,15 @@ public class TransactionService {
             return false;
         }
     }
+
+    public Incentive getIncentiveAmount(Transaction transaction) {
+        RestClient restClient = RestClient.create();
+        return restClient.post()
+                .uri("http://localhost:8080/incentive")
+                .body(transaction)
+                .retrieve()
+                .body(Incentive.class);
+    }
 }
+
+

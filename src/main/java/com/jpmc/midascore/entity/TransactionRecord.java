@@ -1,5 +1,6 @@
 package com.jpmc.midascore.entity;
 
+import com.jpmc.midascore.foundation.Transaction;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -10,6 +11,7 @@ public class TransactionRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Double incentiveAmount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="receipient_id")
@@ -24,11 +26,11 @@ public class TransactionRecord {
 
     private float amount;
 
-    public TransactionRecord(UserRecord receipient, UserRecord sender, float amount) {
+    public TransactionRecord(UserRecord receipient, UserRecord sender, Transaction transaction) {
         this.receipient = receipient;
         this.sender = sender;
-        this.amount = amount;
-
+        this.amount = transaction.getAmount();
+        this.incentiveAmount = transaction.getIncentiveAmount();
     }
 
     public TransactionRecord(){}
@@ -39,6 +41,14 @@ public class TransactionRecord {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Double getIncentiveAmount() {
+        return incentiveAmount;
+    }
+
+    public void setIncentiveAmount(Double incentiveAmount) {
+        this.incentiveAmount = incentiveAmount;
     }
 
     public UserRecord getReceipient() {
