@@ -39,10 +39,4 @@ public class UserService {
             System.out.println(e.getMessage());
         }
     }
-
-
-    public void printUserBalance(Long userId) {
-        UserRecord user = this.getUser(userId).get();
-        System.out.println(user);
-    }
 }

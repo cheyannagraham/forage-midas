@@ -19,14 +19,6 @@ public class KafkaListeners {
     @KafkaListener(id = "${general.kafka-topic}", topics = "${general.kafka-topic}") // Listener for listener container
     public void listener(Transaction transaction) {
         TransactionService transactionService = context.getBean(TransactionService.class);
-        System.out.println("-------------Task 2 Print out------------------------------ ");
-        System.out.println(transaction);
-        if(transactionService.processNewTransaction(transaction)) {
-            System.out.println("-----Transaction Successful------");
-
-            // send transaction to incentive api
-        } else {
-            System.out.println("-----Transaction Failed-------");
-        }
+        transactionService.processNewTransaction(transaction);
     }
 }

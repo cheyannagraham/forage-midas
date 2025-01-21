@@ -40,23 +40,14 @@ public class TransactionService {
         Incentive incentive = getIncentiveAmount(transaction);
         transaction.setIncentiveAmount(incentive.getAmount());
 
-        System.out.println("INCENTIVE AMOUNT RETURNED:\n" + incentive.getAmount());
-
         UserRecord sender = this.userService.getUser(transaction.getSenderId()).get();
         UserRecord recipient = this.userService.getUser(transaction.getRecipientId()).get();
 
         TransactionRecord transactionRecord = new TransactionRecord(sender, recipient, transaction);
 
-
         try {
             transactionRecordRepository.save(transactionRecord);
             this.userService.updateUsersBalance(sender, recipient, transaction);
-
-            System.out.println("---------------------------TASK 3 PrintOut-------------------------");
-            System.out.println("SENDER:");
-            this.userService.printUserBalance(sender.getId());
-            System.out.println("RECIPIENT:");
-            this.userService.printUserBalance(recipient.getId());
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
